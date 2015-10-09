@@ -5,8 +5,8 @@ var requestHandlers = require("./requestHandlers");
 var http = require("http"),
     mongodb = require('mongodb'),
     url = require("url");
-var args = process.argv.slice(2);    
-var uri = "mongodb://"+args[0]+":"+args[1]+"@ds029224.mongolab.com:29224/newstore";
+var args = process.argv.slice(2);
+var uri = "mongodb://" + args[0] + ":" + args[1] + "@ds029224.mongolab.com:29224/newstore";
 
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {
@@ -18,7 +18,7 @@ var allowCrossDomain = function(req, res, next) {
 };
 
 //...
-    app.use(allowCrossDomain);
+app.use(allowCrossDomain);
 
 
 
@@ -34,14 +34,17 @@ mongodb.MongoClient.connect(uri, function(err, db) {
         app.get('/', function(req, res) {
             requestHandlers.start(req, res, pictures);
         });
-        app.get('/showAll',function(req,res){
-            requestHandlers.showAll(req,res,pictures);
+        app.get('/showAll', function(req, res) {
+            requestHandlers.showAll(req, res, pictures);
         });
-        app.post('/upload',function(req, res) {
-            requestHandlers.upload(req,res,pictures);  
+        app.post('/upload', function(req, res) {
+            requestHandlers.upload(req, res, pictures);
         });
-        app.listen(8080, function() {
-            console.log("server has started listening on port 8080");
+        app.delete('/images', function(req, res) {
+            requestHandlers.remove(req, res, pictures);
+        });
+        app.listen(8081, function() {
+            console.log("server has started listening on port 8081");
         });
 
     }

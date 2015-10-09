@@ -51,31 +51,30 @@ function upload(request, response, pictures) {
   if (files.file) {
    var path = files.file.path;
    var i = path.lastIndexOf('/');
-   var link = 'http://cloudphotostoreservice-vaibhav-walia.c9.io:8081/images/' + path.slice(i, path.length);
+   var picID = path.slice(i, path.length);
+   var link = 'http://cloudalbum-vwalia.c9.io/images/' + path.slice(i, path.length);
    console.log('Path:' + path);
    var filename = files.file.name;
    var type = files.file.type;
-   //        console.log("Upload : "+JSON.stringify(files.upload));
-   //The data from client is stored in a temp location(path), read and store in db
-   //	fs.readFile(path,function(err,data){
 
-   //		if(err){ response.writeHead(500,{"Content-Type":"application/json"}); response.end(); throw(err); };
-   //	        var binData = data;
-   //console.log("Binary Data:"+data);
-   //		var base64data = new Buffer(data).toString('base64');
+   // It is assumed that album name will not contan ('') or (""); 
+   // For example: album=album1  and not album='album1' or album="album1"
+   console.log(album);
+   console.log(filename);
    pictures.findOne({
-    album: "'" + album + "'"
+    album: album
    }, (function(err, data) {
     //   			console.log("Error : "+err);
     // 			console.log("Album :"+data);
     if (!data) { //||data.length<1){
      var toInsert = {
-      album: "'" + album + "'",
+      album: album,
       //pictures : [{base64Img : binData,filename : "'"+filename+"'",type : type,link : link}],
       pictures: [{
-       filename: "'" + filename + "'",
+       filename: filename,
        type: type,
-       link: link
+       link: link,
+       ID: picID
       }]
      };
      //console.log(toInsert);
@@ -83,24 +82,27 @@ function upload(request, response, pictures) {
       response.writeHead(201, {
        "Content-Type": "application/json"
       });
-       var toret = "{ \"album\" :\"" + album + "\", \"filename\" : \"" + filename + "\", \"url\" :\" /show?album='" + album + "'&filename='" + filename + "'\"}";
+      var toret = "{ \"album\" :\"" + toInsert.album + "\", \"filename\" : \"" + toInsert.pictures[0].filename + "\", \"url\" :\"" + toInsert.pictures[0].link + "\",\"ID\" :\"" + picID + "\"}";
       response.end(toret);
      });
     }
     else {
+     console.log("album found");
      //	console.log(data);
      //	console.log("here");
      var pics = data.pictures;
      //pics.push({base64Img : binData,filename :"'"+ filename+"'"});
-     pics.push({
-      filename: "'" + filename + "'",
+     var toPush = {
+      filename: filename,
       type: type,
-      link: link
-     });
+      link: link,
+      ID: picID
+     };
+     pics.push(toPush);
      pictures.update({
-      album: "'" + album + "'"
+      album: album
      }, {
-      album: "'" + album + "'",
+      album: album,
       pictures: pics
      }, function(err, data) {
       if (err) {
@@ -113,7 +115,7 @@ function upload(request, response, pictures) {
       response.writeHead(201, {
        "Content-Type": "application/json"
       });
-      var toret = "{ \"album\" :\"" + album + "\", \"filename\" : \"" + filename + "\", \"url\" :\" /show?album='" + album + "'&filename='" + filename + "'\"}";
+      var toret = "{ \"album\" :\"" + album + "\", \"filename\" : \"" + filename + "'\", \"url\" :\"" + link + "\", \"ID\" :\"" + picID + "\"}";
       response.end(toret);
      });
     }
@@ -132,7 +134,62 @@ function upload(request, response, pictures) {
 
 function remove(request, response, pictures) {
  //	console.log("delete called");
- response.end();
+ var url = require("url");
+ var querystring = require('querystring');
+ var query = url.parse(request.url, true).query;
+ var album = query["album"];
+ var filename = query["filename"];
+ var id = query["ID"];
+ console.warn("Deleting file " + filename + " from album " + album + "with id " + id);
+
+ pictures.findOne({
+  album: album
+ }, function(err, data) {
+  if (err) {
+   response.writeHead(500, {
+    "Content-Type": "application/json"
+   });
+   response.end();
+  }
+
+  var pics = data.pictures;
+  var index = pics.map(function(pic) {
+   return pic.ID;
+  }).indexOf(id);
+
+  if (index > -1) {
+   pics.splice(index, 1);
+  }
+  pictures.update({
+   album: album
+  }, {
+   album: album,
+   pictures: pics
+  }, function(err, data) {
+   if (err) {
+    response.writeHead(500, {
+     "Content-Type": "application/json"
+    });
+    response.end();
+    throw (err);
+   }
+   response.writeHead(200,{
+     "Content-Type": "application/json"
+    });
+    response.end();
+
+  });
+
+  /*response.writeHead(200, {
+   "Content-Type": "application/json"
+  });
+  response.end(JSON.stringify(pics));
+  console.log(data);
+  console.log(data.pictures)
+*/
+ });
+
+
 
 }
 
