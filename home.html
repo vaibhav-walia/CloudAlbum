@@ -1,0 +1,44 @@
+<div class="container">
+    <br>
+    <div class="clearfix content-heading">
+        <img src="https://cloudalbum-vwalia.c9.io/images/logo-small.png" class="img-responsive center-block"></img>
+    </div>
+
+    <div ng-controller="CloudPhotoStoreController as cpsc ">
+        <hr>
+        <div class="container">
+            <!-- Trigger the modal with a button -->
+            <a href="#" class="btn btn-info btn-info" ng-click="uploadFile()">
+                <span class="glyphicon glyphicon-cloud"></span> Upload
+            </a>
+            <div class="class='col-xs-3' pull-right">
+                <button type="button" class="btn btn-default btn-sm ">
+                    <span class="glyphicon glyphicon-refresh" ng-click="reload()"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-sm ">
+                    <span class="glyphicon glyphicon-off" ng-click="logout()"></span>
+                </button>
+            </div>
+        </div>
+        <hr>
+        <br>
+        <img ng-if="dataLoading || dataUploading" class="center-block"src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+            />
+        <br ng-if="dataLoading">
+        <br>
+        <div class="panel panel-default " ng-repeat="file in datastructures.files track by $index">
+            <div class="panel-body ">
+                <img class="img-responsive center-block " ng-src="{{file.url}} "> </img>
+                <br>
+                <hr>
+                <button type="button" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-thumbs-up"></span> Like
+                </button>
+                <button ng-click="delete($index)" type="button" class="btn btn-default btn-sm pull-right">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>

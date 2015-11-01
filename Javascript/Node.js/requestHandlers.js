@@ -1,7 +1,7 @@
 var fs = require("fs"),
  formidable = require("formidable");
 
-function start(request, response, pictures) {
+function start(request, response, pictures, io) {
  // console.log("start called");
  pictures.find().toArray(function(err, results) {
 
@@ -31,7 +31,7 @@ function start(request, response, pictures) {
  });
 }
 
-function upload(request, response, pictures) {
+function upload(request, response, pictures, socket) {
  var url = require("url");
  var querystring = require('querystring');
  var query = url.parse(request.url, true).query;
@@ -39,6 +39,11 @@ function upload(request, response, pictures) {
  if (!album) album = 'album1';
  var form = new formidable.IncomingForm({
   uploadDir: '/home/ubuntu/workspace/images'
+ });
+ form.on('progress', function(bytesReceived, bytesExpected) {
+  var progress = {   progress: '' + (bytesReceived / bytesExpected) + ''};
+  socket.emit('news', progress);
+  console.log(progress);
  });
  form.parse(request, function(error, fields, files) {
   //If error send response and throw error
@@ -52,15 +57,15 @@ function upload(request, response, pictures) {
    var path = files.file.path;
    var i = path.lastIndexOf('/');
    var picID = path.slice(i, path.length);
-   var link = 'http://cloudalbum-vwalia.c9.io/images/' + path.slice(i, path.length);
+   var link = 'https://cloudalbum-vwalia.c9.io/images/' + path.slice(i, path.length);
    console.log('Path:' + path);
    var filename = files.file.name;
    var type = files.file.type;
 
    // It is assumed that album name will not contan ('') or (""); 
    // For example: album=album1  and not album='album1' or album="album1"
-   console.log(album);
-   console.log(filename);
+   //console.log(album);
+   //console.log(filename);
    pictures.findOne({
     album: album
    }, (function(err, data) {
@@ -87,7 +92,7 @@ function upload(request, response, pictures) {
      });
     }
     else {
-     console.log("album found");
+     //console.log("album found");
      //	console.log(data);
      //	console.log("here");
      var pics = data.pictures;
@@ -132,7 +137,7 @@ function upload(request, response, pictures) {
  });
 }
 
-function remove(request, response, pictures) {
+function remove(request, response, pictures, io) {
  //	console.log("delete called");
  var url = require("url");
  var querystring = require('querystring');
@@ -140,7 +145,6 @@ function remove(request, response, pictures) {
  var album = query["album"];
  var filename = query["filename"];
  var id = query["ID"];
- console.warn("Deleting file " + filename + " from album " + album + "with id " + id);
 
  pictures.findOne({
   album: album
@@ -173,27 +177,15 @@ function remove(request, response, pictures) {
     response.end();
     throw (err);
    }
-   response.writeHead(200,{
-     "Content-Type": "application/json"
-    });
-    response.end();
-
+   response.writeHead(200, {
+    "Content-Type": "application/json"
+   });
+   response.end();
   });
-
-  /*response.writeHead(200, {
-   "Content-Type": "application/json"
-  });
-  response.end(JSON.stringify(pics));
-  console.log(data);
-  console.log(data.pictures)
-*/
  });
-
-
-
 }
 
-function show(request, response, pictures) {
+function show(request, response, pictures, io) {
 
  var url = require("url");
  var querystring = require('querystring');
@@ -264,7 +256,7 @@ function show(request, response, pictures) {
  }
 }
 
-function showAll(request, response, pictures) {
+function showAll(request, response, pictures, io) {
  var toret = '[';
  var responseHeaders = {
   "Access-Control-Allow-Origin": "*",

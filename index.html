@@ -5,61 +5,31 @@
   <title></title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-route.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-cookies.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.js"></script>
+  <script src="https://cloudalbum-vwalia.c9.io:8081/socket.io/socket.io.js"></script>
   <script src="Javascript/Angular.js/CloudPhotoStoreServiceModule.js"></script>
   <script src="Javascript/Angular.js/CloudPhotoStoreModule.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular-animate.min.js"></script>
-  <script src="Javascript/Angular.js/pace/pace.min.js"></script>
-  <link href="Javascript/Angular.js/pace/dataurl.css" rel="stylesheet" />
 
+  <!--script>
+    var socket = io('https://cloudalbum-vwalia.c9.io:8081');
+    socket.on('news', function (data) {
+    console.log(data);
+    });
+  </script-->
 </head>
 
 <body>
-  <div class="container">
-    <br>
-    <div class="clearfix content-heading">
-      <img src="http://cloudalbum-vwalia.c9.io/images/logo-small.png" class="img-responsive center-block"></img>
+  <div >
+    <div class="container">
+      <!--div class="col-xs-offset-2 col-xs-8"-->
+        <div ng-view></div>
+      <!--/div-->
     </div>
-
-
-    <!--div ng-controller="CloudPhotoStoreController as upload">
-    
-      <div class="container">
-     
-        <a href="#" class="btn btn-info btn-info" ng-click="uploadFile()">
-          <span class="glyphicon glyphicon-cloud"></span> Upload
-        </a>
-      </div>
-    </div>
-    <hr>
-    <br>
-
-    <br-->
-    <div ng-controller="CloudPhotoStoreController as cpsc ">
-      <hr>
-      <div class="container">
-        <!-- Trigger the modal with a button -->
-        <a href="#" class="btn btn-info btn-info" ng-click="uploadFile()">
-          <span class="glyphicon glyphicon-cloud"></span> Upload
-        </a>
-      </div>
-      <hr>
-      <br>
-      <br>
-      <!--input ng-model ="res"></input-->
-      <!--button ng-click="showres()"></button-->
-      <div class="panel panel-default " ng-repeat="file in datastructures.files ">
-        <div class="panel-body ">
-          <img class="img-responsive center-block " ng-src="{{file}} "> </img>
-        </div>
-      </div>
-    </div>
-
-    <br>
-    <!--img src="/resources/images/ajax-loader.gif " class="img-responsive center-block " id="wait "-->
   </div>
 </body>
 
